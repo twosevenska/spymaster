@@ -2,11 +2,13 @@ package types
 
 import (
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 // User stores bson query result
 type User struct {
-	ID        string    `bson:"_id" json:"id"`
+	ID        uuid.UUID `bson:"_id" json:"id"`
 	FirstName string    `bson:"first_name" json:"first_name"`
 	LastName  string    `bson:"last_name" json:"last_name"`
 	Nickname  string    `bson:"nickname" json:"nickname"`
@@ -28,7 +30,6 @@ type UsersResult struct {
 // UserPost holds body for user creation request
 type UserPost struct {
 	// ID is set internaly
-	ID        string  `bson:"_id" json:"_id"`
 	FirstName *string `bson:"first_name" json:"first_name"`
 	LastName  *string `bson:"last_name" json:"last_name"`
 	Nickname  string  `bson:"nickname" json:"nickname" binding:"required"`

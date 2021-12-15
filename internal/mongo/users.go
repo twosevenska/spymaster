@@ -48,7 +48,7 @@ func (c Client) CreateUser(payload types.UserPost) (user types.User, err error) 
 	now := time.Now().UTC()
 
 	user = types.User{
-		ID:        uuid.New(),
+		ID:        uuid.NewV4(),
 		Nickname:  payload.Nickname,
 		Password:  payload.Password,
 		Email:     payload.Email,
@@ -73,7 +73,7 @@ func (c Client) CreateUser(payload types.UserPost) (user types.User, err error) 
 func (c Client) UpdateUser(userID string, payload types.UserPatch) (user types.User, err error) {
 	collection := c.Database.C(usersCollection)
 
-	u, err := uuid.Parse(userID)
+	u, err := uuid.FromString(userID)
 	if err != nil {
 		err = ErrInvalidUUID
 		return
@@ -94,7 +94,7 @@ func (c Client) UpdateUser(userID string, payload types.UserPatch) (user types.U
 func (c Client) DeleteUser(userID string) (err error) {
 	collection := c.Database.C(usersCollection)
 
-	u, err := uuid.Parse(userID)
+	u, err := uuid.FromString(userID)
 	if err != nil {
 		err = ErrInvalidUUID
 		return
