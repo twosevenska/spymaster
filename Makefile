@@ -8,6 +8,10 @@ go-test:
 	@echo "Run all project tests..."
 	go test -p 1 ./...
 
+.PHONY: go-convey
+go-convey:
+	goconvey -workDir=./tests/
+
 .PHONY: bin
 bin: clean
 	@echo "Build project binaries..."
@@ -19,9 +23,6 @@ bin: clean
 clean:
 	rm -rf $(BUILD_CONTEXT)/
 
-.PHONY: test
-test: go-test
-
 .PHONY: run
 run:
 	go run cmd/spymaster/main.go
@@ -31,13 +32,23 @@ get:
 	@echo "Fetch project dependencies..."
 	go mod tidy
 
-.PHONY: docker-up
-docker-up: docker-clean
+.PHONY: docker-pull
+docker-pull:
+	@echo "Updating containers"
 	docker-compose -f $(DOCKER_CONTEXT)/docker-compose.yml pull
+
+.PHONY: docker-kill
+docker-kill:
+	@echo "Killing old containers"
 	docker-compose -f $(DOCKER_CONTEXT)/docker-compose.yml kill
-	docker-compose -f $(DOCKER_CONTEXT)/docker-compose.yml up -d
 
 .PHONY: docker-clean
 docker-clean:
+	@echo "Ensuring everything is scrubbed clean"
 	@docker volume rm $(shell docker volume ls -qf dangling=true) 2>/dev/null ||:
 	@docker rmi $(shell docker images -q -f dangling=true) 2>/dev/null ||:
+
+.PHONY: docker-up
+docker-up: docker-pull docker-kill docker-clean
+	@echo "Starting containers"
+	docker-compose -f $(DOCKER_CONTEXT)/docker-compose.yml up -d

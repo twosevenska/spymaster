@@ -62,7 +62,7 @@ func Connect(conf Config) (*Client, error) {
 func ensureIndices(s *mgo.Session, db string) {
 	session := s.Copy()
 	defer session.Close()
-	c := session.DB(db).C("rules")
+	c := session.DB(db).C("users")
 	createIndex(c, []string{"_id", "country"}, false)
 	createIndex(c, []string{"nickname", "email"}, true)
 	createIndex(c, []string{"nickname", "country"}, false)
