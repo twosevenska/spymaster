@@ -16,4 +16,9 @@ Lorem Ipsum
 * Async
 * Improve test coverage
 * Update the README
-* Update Makefile
+
+## Known issues
+
+* Lack treating uppercase/lowercase
+* Lack field validation
+* Lack Input trimming
