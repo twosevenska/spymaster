@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/kelseyhightower/envconfig"
 
 	"internal/mongo"
+	"internal/server"
 )
 
 // Config ...
@@ -15,11 +17,6 @@ type Config struct {
 	Mongo mongo.Config `envconfig:"mongo"`
 }
 
-// ContextParams holds the objects required
-type ContextParams struct {
-	MongoClient *mongo.Client
-}
-
 func main() {
 	var conf Config
 	err := envconfig.Process("spymaster", &conf)
@@ -27,17 +24,44 @@ func main() {
 		log.Fatalf("Failed to load env config: %s", err.Error())
 	}
 
-	Splash()
+	fmt.Println(splash)
 
 	mc, err := mongo.Connect(conf.Mongo)
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB: %s", err)
 	}
 
-	contextParams := ContextParams{
-		MongoClient: mc,
-	}
-
-	r := createRouter(&contextParams)
+	r := server.CreateRouter(mc)
 	r.Run(":7000") // listen and serve on 0.0.0.0:7000
 }
+
+const splash = `
+
+  *****************************************
+  *               Spymaster               *
+  *****************************************
+                ████████████              
+              ██▓▓▓▓▓▓▓▓▓▓▓▓██            
+            ██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██          
+            ██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██        
+          ██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██        
+          ██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██        
+          ██▓▓▓▓▓▓    ████   ▓▓██        
+            ██▓▓▓▓    ████   ▓▓█        
+          ████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██        
+      ████▓▓▓▓██▓▓  ████████  ██████      
+    ██▓▓▓▓▓▓▓▓▓▓██          ██▓▓▓▓▓▓██    
+    ██▓▓▓▓▓▓▓▓▓▓▓▓██████████▓▓▓▓▓▓▓▓██    
+  ██▓▓▓▓▓▓▓▓██▓▓▓▓  ██  ▓▓▓▓██▓▓▓▓▓▓▓▓██  
+  ██▓▓▓▓██████▓▓▓▓▓▓██  ▓▓▓▓██████▓▓▓▓██  
+  ██▓▓▓▓▓▓████▓▓▓▓▓▓▓▓▓▓▓▓▓▓████▓▓▓▓▓▓██  
+  ██▓▓▓▓▓▓████▓▓▓▓▓▓▓▓▓▓▓▓▓▓████▓▓▓▓▓▓██  
+    ██████  ██▓▓▓▓▓▓▓▓▓▓▓▓▓▓██  ██████    
+          ██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██          
+        ██▓▓▓▓▓▓▓▓▓▓██▓▓▓▓▓▓▓▓▓▓██        
+      ████▓▓▓▓▓▓▓▓██  ██▓▓▓▓▓▓▓▓████      
+  ████▓▓▓▓▓▓▓▓▓▓██      ██▓▓▓▓▓▓▓▓▓▓████  
+██▓▓▓▓▓▓▓▓▓▓▓▓▓▓██      ██▓▓▓▓▓▓▓▓▓▓▓▓▓▓██
+██████████████████      ██████████████████
+
+`

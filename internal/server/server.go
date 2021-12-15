@@ -1,16 +1,26 @@
-package main
+package server
 
 import (
 	"github.com/gin-gonic/gin"
 
 	"internal/controllers"
+	"internal/mongo"
 )
+
+// ContextParams holds the objects required
+type ContextParams struct {
+	MongoClient *mongo.Client
+}
 
 // CreateRouter creates a gin Engine and attaches backend clients, if needed as well as routes
 // to all enpoints
-func createRouter(contextParams *ContextParams) *gin.Engine {
+func CreateRouter(mc *mongo.Client) *gin.Engine {
+	contextParams := ContextParams{
+		MongoClient: mc,
+	}
+
 	r := gin.Default()
-	r.Use(ContextObjects(contextParams))
+	r.Use(ContextObjects(&contextParams))
 
 	r.GET("/ping", controllers.Ping)
 
