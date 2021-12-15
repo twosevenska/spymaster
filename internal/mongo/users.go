@@ -7,7 +7,6 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
-	uuid "github.com/satori/go.uuid"
 
 	"types"
 )
@@ -37,8 +36,11 @@ func (c Client) ListUsers(exactSearch map[string]interface{}, partialSearch map[
 		query = query.Skip(perPage * (pageNumber - 1)).Limit(perPage)
 	}
 
-	r := []types.User{}
+	var r []types.User
 	query.All(&r)
+
+	log.Println(r)
+
 	return r, total, err
 }
 
@@ -48,7 +50,7 @@ func (c Client) CreateUser(payload types.UserPost) (user types.User, err error) 
 	now := time.Now().UTC()
 
 	user = types.User{
-		ID:        uuid.NewV4(),
+		ID:        bson.NewObjectId(),
 		Nickname:  payload.Nickname,
 		Password:  payload.Password,
 		Email:     payload.Email,
@@ -73,7 +75,7 @@ func (c Client) CreateUser(payload types.UserPost) (user types.User, err error) 
 func (c Client) UpdateUser(userID string, payload types.UserPatch) (user types.User, err error) {
 	collection := c.Database.C(usersCollection)
 
-	u, err := uuid.FromString(userID)
+	u := bson.ObjectIdHex(userID)
 	if err != nil {
 		err = ErrInvalidUUID
 		return
@@ -94,7 +96,7 @@ func (c Client) UpdateUser(userID string, payload types.UserPatch) (user types.U
 func (c Client) DeleteUser(userID string) (err error) {
 	collection := c.Database.C(usersCollection)
 
-	u, err := uuid.FromString(userID)
+	u := bson.ObjectIdHex(userID)
 	if err != nil {
 		err = ErrInvalidUUID
 		return

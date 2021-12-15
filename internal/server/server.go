@@ -23,6 +23,7 @@ func CreateRouter(mc *mongo.Client) *gin.Engine {
 	r.Use(ContextObjects(&contextParams))
 
 	r.GET("/ping", controllers.Ping)
+	r.GET("/health", controllers.Health)
 
 	api := r.Group("/", controllers.Pagination())
 	{

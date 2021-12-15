@@ -13,9 +13,7 @@ Lorem Ipsum
 ## Major TODOS
 
 * Add a dispatcher for our "queue"
-* Create a mock Mongo container
 * Async
 * Improve test coverage
-* Docker stuff
 * Update the README
-* Easy env vars setup
+* Update Makefile

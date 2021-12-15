@@ -6,9 +6,11 @@ services:
     ports:
       - 27017:27017
     environment:
-      MONGO_INITDB_ROOT_USERNAME: test
-      MONGO_INITDB_ROOT_PASSWORD: test
+      MONGO_INITDB_ROOT_USERNAME: admin-user
+      MONGO_INITDB_ROOT_PASSWORD: adm1n
+      ENV MONGO_INITDB_DATABASE: admin
     volumes:
-      - ./mongod.conf:/etc/mongod.conf
-    command: "mongod --config /etc/mongod.conf"
+      - ./mongo/mongod.conf:/etc/mongod.conf
+      - ./mongo/fixtures/:/docker-entrypoint-initdb.d/
+    command: "mongod --bind_ip_all --config /etc/mongod.conf"
     restart: always

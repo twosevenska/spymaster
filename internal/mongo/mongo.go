@@ -12,8 +12,8 @@ import (
 // Config holds the required configuration for a MongoDB connection
 type Config struct {
 	Hosts    []string `envconfig:"hosts_tls" default:"0.0.0.0:27017"`
-	Database string   `envconfig:"-" default:"test"`
-	User     string   `envconfig:"-" default:"test"`
+	Database string   `envconfig:"-" default:"spymaster"`
+	User     string   `envconfig:"-" default:"spymaster"`
 	Password string   `envconfig:"-" default:"face1t"`
 }
 

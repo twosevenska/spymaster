@@ -12,7 +12,6 @@ import (
 
 // Config ...
 type Config struct {
-	// BaseURL   string       `envconfig:"base_url" default:"https://10.0.0.1"`
 	// UserTopic string       `envconfig:"user_notification_topic" default:"user-notifications"`
 	Mongo mongo.Config `envconfig:"mongo"`
 }
