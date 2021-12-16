@@ -139,3 +139,15 @@ func createUser(u types.User) (nu *types.User, err error) {
 
 	return
 }
+
+func getDBUser(userID string) (u types.User, err error) {
+	id := bson.ObjectIdHex(userID)
+
+	criteria := bson.M{"_id": id}
+	err = mc.Database.C("users").Find(criteria).One(&u)
+	if err != nil {
+		return
+	}
+
+	return
+}

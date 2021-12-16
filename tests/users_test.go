@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
 	"types"
@@ -251,6 +252,11 @@ func TestDeleteUser(t *testing.T) {
 			r.ServeHTTP(recorder, req)
 			resp := recorder.Result()
 			So(resp.StatusCode, ShouldEqual, http.StatusNoContent)
+
+			Convey("Ensure the user was deleted in the DB", func() {
+				_, err := getDBUser(userId)
+				So(err, ShouldEqual, mgo.ErrNotFound)
+			})
 		})
 	}))
 }
