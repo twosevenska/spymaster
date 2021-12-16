@@ -64,19 +64,56 @@ func TestListUsers(t *testing.T) {
 			createUser(u3)
 
 			Convey("And we don't filter...", func() {
-				req, err := http.NewRequest("GET", "/users", nil)
-				So(err, ShouldBeNil)
+				Convey("Nor paginate", func() {
+					req, err := http.NewRequest("GET", "/users", nil)
+					So(err, ShouldBeNil)
 
-				var result types.UsersResult
-				serveAndUnmarshal(recorder, req, &result)
-				resp := recorder.Result()
+					var result types.UsersResult
+					serveAndUnmarshal(recorder, req, &result)
+					resp := recorder.Result()
 
-				Convey("The response should be an empty JSON array", func() {
-					So(resp.StatusCode, ShouldEqual, http.StatusOK)
-					So(result.Page, ShouldEqual, 1)
-					So(result.PerPage, ShouldEqual, 100)
-					So(result.TotalCount, ShouldEqual, 3)
-					So(result.Users, ShouldHaveLength, 3)
+					Convey("The response should be an empty JSON array", func() {
+						So(resp.StatusCode, ShouldEqual, http.StatusOK)
+						So(result.Page, ShouldEqual, 1)
+						So(result.PerPage, ShouldEqual, 100)
+						So(result.TotalCount, ShouldEqual, 3)
+						So(result.Users, ShouldHaveLength, 3)
+					})
+				})
+
+				Convey("Paginate", func() {
+					Convey("First page", func() {
+						req, err := http.NewRequest("GET", "/users?per_page=1", nil)
+						So(err, ShouldBeNil)
+
+						var result types.UsersResult
+						serveAndUnmarshal(recorder, req, &result)
+						resp := recorder.Result()
+
+						Convey("The response should be an empty JSON array", func() {
+							So(resp.StatusCode, ShouldEqual, http.StatusOK)
+							So(result.Page, ShouldEqual, 1)
+							So(result.PerPage, ShouldEqual, 1)
+							So(result.TotalCount, ShouldEqual, 3)
+							So(result.Users, ShouldHaveLength, 1)
+						})
+					})
+					Convey("Second page", func() {
+						req, err := http.NewRequest("GET", "/users?per_page=1&page=2", nil)
+						So(err, ShouldBeNil)
+
+						var result types.UsersResult
+						serveAndUnmarshal(recorder, req, &result)
+						resp := recorder.Result()
+
+						Convey("The response should be an empty JSON array", func() {
+							So(resp.StatusCode, ShouldEqual, http.StatusOK)
+							So(result.Page, ShouldEqual, 2)
+							So(result.PerPage, ShouldEqual, 1)
+							So(result.TotalCount, ShouldEqual, 3)
+							So(result.Users, ShouldHaveLength, 1)
+						})
+					})
 				})
 			})
 

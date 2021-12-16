@@ -22,3 +22,4 @@ Lorem Ipsum
 * Lack treating uppercase/lowercase
 * Lack field validation
 * Lack Input trimming
+* Coverage not working
