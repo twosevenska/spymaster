@@ -1,7 +1,10 @@
 package controllers_test
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -176,24 +179,92 @@ func TestListUsers(t *testing.T) {
 }
 
 func TestCreateUser(t *testing.T) {
-	Convey("When a list of Users is requested from the API...", t, withCleanup(func() {
+	Convey("When a new user is created through the API...", t, withCleanup(func() {
 		recorder := httptest.NewRecorder()
 
-		Convey("And there are no users.", func() {
-			req, err := http.NewRequest("GET", "/users", nil)
+		Convey("And the user does not exist", func() {
+			Convey("And the payload was valid", func() {
+
+				payload := map[string]interface{}{
+					"first_name": "Robin",
+					"last_name":  "Williams",
+					"nickname":   "genie",
+					"password":   "Jumanji",
+					"email":      "rwilliams@hollywood.fake",
+					"country":    "US",
+				}
+				p, err := json.Marshal(payload)
+				if err != nil {
+					log.Printf("server_test: Error creating POST request: %s", err)
+				}
+
+				req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(p))
+				So(err, ShouldBeNil)
+
+				var result types.User
+				serveAndUnmarshal(recorder, req, &result)
+				resp := recorder.Result()
+
+				Convey("Ensure the user was properly created", func() {
+					So(resp.StatusCode, ShouldEqual, http.StatusCreated)
+					u, err := getDBUser(result.ID.Hex())
+					So(err, ShouldBeNil)
+					So(u.Nickname, ShouldEqual, payload["nickname"])
+				})
+			})
+
+			Convey("And the payload was not valid", func() {
+
+				payload := map[string]interface{}{
+					"first_name": "Robin",
+					"last_name":  "Williams",
+					"OPS":        "OPS",
+				}
+				p, err := json.Marshal(payload)
+				if err != nil {
+					log.Printf("server_test: Error creating POST request: %s", err)
+				}
+
+				req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(p))
+				So(err, ShouldBeNil)
+
+				r.ServeHTTP(recorder, req)
+				resp := recorder.Result()
+				So(resp.StatusCode, ShouldEqual, http.StatusBadRequest)
+			})
+		})
+
+		Convey("And the user exists", func() {
+			u2 := types.User{
+				FirstName: "Blue",
+				LastName:  "King",
+				Nickname:  "fake_hastur",
+				Password:  "Carcosa",
+				Email:     "fake_hastur@lost.space",
+				Country:   "UK",
+			}
+			createUser(u2)
+
+			payload := map[string]interface{}{
+				"first_name": "Blue",
+				"last_name":  "King",
+				"nickname":   "fake_hastur",
+				"password":   "Carcosa",
+				"email":      "fake_hastur@lost.space",
+				"country":    "UK",
+			}
+			p, err := json.Marshal(payload)
+			if err != nil {
+				log.Printf("server_test: Error creating POST request: %s", err)
+			}
+
+			req, err := http.NewRequest("POST", "/users", bytes.NewBuffer(p))
 			So(err, ShouldBeNil)
 
-			var result types.UsersResult
+			var result types.User
 			serveAndUnmarshal(recorder, req, &result)
 			resp := recorder.Result()
-
-			Convey("The response should be an empty JSON array", func() {
-				So(resp.StatusCode, ShouldEqual, http.StatusOK)
-				So(result.Page, ShouldEqual, 1)
-				So(result.PerPage, ShouldEqual, 100)
-				So(result.TotalCount, ShouldEqual, 0)
-				So(result.Users, ShouldHaveLength, 0)
-			})
+			So(resp.StatusCode, ShouldEqual, http.StatusConflict)
 		})
 	}))
 }
