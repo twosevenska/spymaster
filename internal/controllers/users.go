@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 
 	"internal/mongo"
 	"types"
@@ -86,11 +87,13 @@ func CreateUser(c *gin.Context) {
 // UpdateUser creates a new user
 func UpdateUser(c *gin.Context) {
 	mc := c.MustGet("mongo").(mongo.Client)
-	id := c.Param("id")
+	id, _ := c.GetQuery("id")
 
 	var payload = &types.UserPatch{}
-	errs := c.ShouldBindJSON(payload)
-	if errs != nil {
+	errs := c.ShouldBindWith(payload, binding.JSON)
+	fmt.Printf("\n%#v\n", payload)
+	fmt.Printf("\n%#v\n", &types.UserPatch{})
+	if (errs != nil || *payload == types.UserPatch{}) {
 		e := fmt.Sprintf("Invalid payload received: %s", errs)
 		c.JSON(http.StatusBadRequest, e)
 		return

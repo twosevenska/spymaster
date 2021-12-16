@@ -40,11 +40,11 @@ type UserPost struct {
 
 // UserPatch holds body for user update request
 type UserPatch struct {
-	FirstName *string   `bson:"first_name" json:"first_name"`
-	LastName  *string   `bson:"last_name" json:"last_name"`
-	Nickname  *string   `bson:"nickname" json:"nickname"`
-	Password  *string   `bson:"password" json:"password"`
-	Email     *string   `bson:"email" json:"email"`
-	Country   *string   `bson:"country" json:"country"`
+	FirstName *string   `bson:"first_name,omitempty" json:"first_name,omitempty"`
+	LastName  *string   `bson:"last_name,omitempty" json:"last_name,omitempty"`
+	Nickname  *string   `bson:"nickname,omitempty" json:"nickname,omitempty"`
+	Password  *string   `bson:"password,omitempty" json:"password,omitempty"`
+	Email     *string   `bson:"email,omitempty" json:"email,omitempty"`
+	Country   *string   `bson:"country,omitempty" json:"country,omitempty"`
 	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
 }

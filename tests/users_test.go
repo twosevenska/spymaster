@@ -270,24 +270,86 @@ func TestCreateUser(t *testing.T) {
 }
 
 func TestUpdateUser(t *testing.T) {
-	Convey("When a list of Users is requested from the API...", t, withCleanup(func() {
+	Convey("When a user update is requested through the API...", t, withCleanup(func() {
 		recorder := httptest.NewRecorder()
 
-		Convey("And there are no users.", func() {
-			req, err := http.NewRequest("GET", "/users", nil)
+		payload := map[string]interface{}{
+			"email": "fancy.new@email.fake",
+		}
+
+		Convey("And the user exists", func() {
+			user1 := types.User{
+				FirstName: "Yellow",
+				LastName:  "King",
+				Nickname:  "hastur",
+				Password:  "Carcosa",
+				Email:     "hastur@lost.space",
+				Country:   "UK",
+			}
+			dbUser, _ := createUser(user1)
+			userId := dbUser.ID.Hex()
+
+			Convey("And the payload was valid", func() {
+				p, err := json.Marshal(payload)
+				if err != nil {
+					log.Printf("server_test: Error creating PATCH request: %s", err)
+				}
+
+				req, err := http.NewRequest("PATCH", fmt.Sprintf("/users?id=%s", userId), bytes.NewBuffer(p))
+				So(err, ShouldBeNil)
+
+				var result types.User
+				serveAndUnmarshal(recorder, req, &result)
+				resp := recorder.Result()
+
+				Convey("Ensure the user was properly updated", func() {
+					So(resp.StatusCode, ShouldEqual, http.StatusOK)
+					u, err := getDBUser(result.ID.Hex())
+					So(err, ShouldBeNil)
+					So(u.Email, ShouldEqual, payload["email"])
+					So(u.FirstName, ShouldEqual, user1.FirstName)
+				})
+			})
+
+			Convey("And the payload was not valid", func() {
+				originalUser, err := getDBUser(userId)
+				So(err, ShouldBeNil)
+
+				payload := map[string]interface{}{
+					"OPS": "OPS",
+				}
+				p, err := json.Marshal(payload)
+				if err != nil {
+					log.Printf("server_test: Error creating POST request: %s", err)
+				}
+
+				req, err := http.NewRequest("PATCH", fmt.Sprintf("/users?id=%s", userId), bytes.NewBuffer(p))
+				So(err, ShouldBeNil)
+
+				r.ServeHTTP(recorder, req)
+				resp := recorder.Result()
+
+				Convey("Ensure the user was not updated", func() {
+					So(resp.StatusCode, ShouldEqual, http.StatusBadRequest)
+					u, err := getDBUser(userId)
+					So(err, ShouldBeNil)
+					So(u, ShouldResemble, originalUser)
+				})
+			})
+		})
+
+		Convey("And the user does not exists", func() {
+			p, err := json.Marshal(payload)
+			if err != nil {
+				log.Printf("server_test: Error creating POST request: %s", err)
+			}
+
+			req, err := http.NewRequest("PATCH", fmt.Sprintf("/users?id=61ba6382df4bec585cf60e60"), bytes.NewBuffer(p))
 			So(err, ShouldBeNil)
 
-			var result types.UsersResult
-			serveAndUnmarshal(recorder, req, &result)
+			r.ServeHTTP(recorder, req)
 			resp := recorder.Result()
-
-			Convey("The response should be an empty JSON array", func() {
-				So(resp.StatusCode, ShouldEqual, http.StatusOK)
-				So(result.Page, ShouldEqual, 1)
-				So(result.PerPage, ShouldEqual, 100)
-				So(result.TotalCount, ShouldEqual, 0)
-				So(result.Users, ShouldHaveLength, 0)
-			})
+			So(resp.StatusCode, ShouldEqual, http.StatusNotFound)
 		})
 	}))
 }
