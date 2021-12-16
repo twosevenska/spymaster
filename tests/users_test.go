@@ -1,6 +1,7 @@
 package controllers_test
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -169,6 +170,87 @@ func TestListUsers(t *testing.T) {
 					})
 				})
 			})
+		})
+	}))
+}
+
+func TestCreateUser(t *testing.T) {
+	Convey("When a list of Users is requested from the API...", t, withCleanup(func() {
+		recorder := httptest.NewRecorder()
+
+		Convey("And there are no users.", func() {
+			req, err := http.NewRequest("GET", "/users", nil)
+			So(err, ShouldBeNil)
+
+			var result types.UsersResult
+			serveAndUnmarshal(recorder, req, &result)
+			resp := recorder.Result()
+
+			Convey("The response should be an empty JSON array", func() {
+				So(resp.StatusCode, ShouldEqual, http.StatusOK)
+				So(result.Page, ShouldEqual, 1)
+				So(result.PerPage, ShouldEqual, 100)
+				So(result.TotalCount, ShouldEqual, 0)
+				So(result.Users, ShouldHaveLength, 0)
+			})
+		})
+	}))
+}
+
+func TestUpdateUser(t *testing.T) {
+	Convey("When a list of Users is requested from the API...", t, withCleanup(func() {
+		recorder := httptest.NewRecorder()
+
+		Convey("And there are no users.", func() {
+			req, err := http.NewRequest("GET", "/users", nil)
+			So(err, ShouldBeNil)
+
+			var result types.UsersResult
+			serveAndUnmarshal(recorder, req, &result)
+			resp := recorder.Result()
+
+			Convey("The response should be an empty JSON array", func() {
+				So(resp.StatusCode, ShouldEqual, http.StatusOK)
+				So(result.Page, ShouldEqual, 1)
+				So(result.PerPage, ShouldEqual, 100)
+				So(result.TotalCount, ShouldEqual, 0)
+				So(result.Users, ShouldHaveLength, 0)
+			})
+		})
+	}))
+}
+
+func TestDeleteUser(t *testing.T) {
+	Convey("When a delete request comes in...", t, withCleanup(func() {
+		recorder := httptest.NewRecorder()
+
+		Convey("And the user does not exist", func() {
+			req, err := http.NewRequest("DELETE", "/users?id=61ba6382df4bec585cf60e60", nil)
+			So(err, ShouldBeNil)
+
+			r.ServeHTTP(recorder, req)
+			resp := recorder.Result()
+			So(resp.StatusCode, ShouldEqual, http.StatusNoContent)
+		})
+
+		Convey("And the user exists", func() {
+			user1 := types.User{
+				FirstName: "Yellow",
+				LastName:  "King",
+				Nickname:  "hastur",
+				Password:  "Carcosa",
+				Email:     "hastur@lost.space",
+				Country:   "UK",
+			}
+			dbUser, _ := createUser(user1)
+			userId := dbUser.ID.Hex()
+
+			req, err := http.NewRequest("DELETE", fmt.Sprintf("/users?id=%s", userId), nil)
+			So(err, ShouldBeNil)
+
+			r.ServeHTTP(recorder, req)
+			resp := recorder.Result()
+			So(resp.StatusCode, ShouldEqual, http.StatusNoContent)
 		})
 	}))
 }

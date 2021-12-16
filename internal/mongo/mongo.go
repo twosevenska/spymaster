@@ -25,8 +25,8 @@ type Client struct {
 }
 
 var (
-	// ErrInvalidUUID indicates that an invalid UUID is passed as a parameter
-	ErrInvalidUUID = errors.New("invalid database ID")
+	// ErrInvalidID indicates that an invalid ID is passed as a parameter
+	ErrInvalidID = errors.New("invalid database ID")
 )
 
 const (
@@ -109,9 +109,9 @@ func (c Client) IsNotFound(err error) bool {
 	return err == mgo.ErrNotFound
 }
 
-// IsInvalidUUID returns whether err informs of an invalid UUID
-func (c Client) IsInvalidUUID(err error) bool {
-	return err == ErrInvalidUUID
+// IsInvalidID returns whether err informs of an invalid UUID
+func (c Client) IsInvalidID(err error) bool {
+	return err == ErrInvalidID
 }
 
 // safeFind is a wrapper around the regular mgo driver find function that adds a query execution timeout

@@ -28,9 +28,9 @@ func CreateRouter(mc *mongo.Client) *gin.Engine {
 	api := r.Group("/", controllers.Pagination())
 	{
 		api.GET("/users", controllers.ListUsers)
-		api.POST("/user", controllers.CreateUser)
-		api.PATCH("/user", controllers.UpdateUser)
-		api.DELETE("/user", controllers.DeleteUser)
+		api.POST("/users", controllers.CreateUser)
+		api.PATCH("/users", controllers.UpdateUser)
+		api.DELETE("/users", controllers.DeleteUser)
 	}
 
 	return r

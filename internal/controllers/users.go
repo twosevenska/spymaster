@@ -115,7 +115,7 @@ func UpdateUser(c *gin.Context) {
 // DeleteUser creates a new user
 func DeleteUser(c *gin.Context) {
 	mc := c.MustGet("mongo").(mongo.Client)
-	id := c.Param("id")
+	id, _ := c.GetQuery("id")
 
 	err := mc.DeleteUser(id)
 	if err != nil {

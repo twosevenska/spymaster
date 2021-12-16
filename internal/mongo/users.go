@@ -77,7 +77,7 @@ func (c Client) UpdateUser(userID string, payload types.UserPatch) (user types.U
 
 	u := bson.ObjectIdHex(userID)
 	if err != nil {
-		err = ErrInvalidUUID
+		err = ErrInvalidID
 		return
 	}
 
@@ -96,11 +96,12 @@ func (c Client) UpdateUser(userID string, payload types.UserPatch) (user types.U
 func (c Client) DeleteUser(userID string) (err error) {
 	collection := c.Database.C(usersCollection)
 
-	u := bson.ObjectIdHex(userID)
-	if err != nil {
-		err = ErrInvalidUUID
+	isHex := bson.IsObjectIdHex(userID)
+	if !isHex {
+		err = ErrInvalidID
 		return
 	}
+	u := bson.ObjectIdHex(userID)
 
 	criteria := bson.M{"_id": u}
 	change := mgo.Change{
