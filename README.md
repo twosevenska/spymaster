@@ -14,7 +14,6 @@ Lorem Ipsum
 
 * Add a dispatcher for our "queue"
 * Async
-* Improve test coverage
 * Update the README
 
 ## Known issues
@@ -22,4 +21,4 @@ Lorem Ipsum
 * Lack treating uppercase/lowercase
 * Lack field validation
 * Lack Input trimming
-* Coverage not working
+* Coverage report not working
