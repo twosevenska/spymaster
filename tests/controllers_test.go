@@ -13,9 +13,9 @@ import (
 	"github.com/globalsign/mgo/bson"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"internal/mongo"
-	"internal/server"
-	"types"
+	"spymaster/src/mongo"
+	"spymaster/src/server"
+	"spymaster/types"
 )
 
 // errorResponse represents an API response error

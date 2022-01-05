@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"internal/mongo"
+	"spymaster/src/mongo"
 )
 
 // Ping returns a ping response

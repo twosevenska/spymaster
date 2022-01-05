@@ -3,8 +3,8 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 
-	"internal/controllers"
-	"internal/mongo"
+	"spymaster/src/controllers"
+	"spymaster/src/mongo"
 )
 
 // ContextParams holds the objects required

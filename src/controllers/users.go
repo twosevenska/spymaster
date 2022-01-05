@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"internal/spymaster"
-	"types"
+	"spymaster/src/spymaster"
+	"spymaster/types"
 )
 
 var partialSearchFields = []string{"first_name", "last_name", "nickname", "email"}

@@ -12,7 +12,7 @@ import (
 	"github.com/globalsign/mgo"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"types"
+	"spymaster/types"
 )
 
 func TestListUsers(t *testing.T) {

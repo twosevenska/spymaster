@@ -6,8 +6,8 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 
-	"internal/mongo"
-	"internal/server"
+	"spymaster/src/mongo"
+	"spymaster/src/server"
 )
 
 // Config ...

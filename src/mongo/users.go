@@ -8,7 +8,7 @@ import (
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 
-	"types"
+	"spymaster/types"
 )
 
 const usersCollection = "users"

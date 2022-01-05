@@ -1,4 +1,4 @@
-module twosevenska.com/spymaster
+module spymaster
 
 go 1.17
 
@@ -6,21 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/kelseyhightower/envconfig v1.4.0
-)
-
-require (
 	github.com/smartystreets/goconvey v1.7.2
-	internal/mongo v1.0.0
-	internal/server v1.0.0
-	types v1.0.0
-)
-
-replace (
-	internal/controllers => ./internal/controllers
-	internal/mongo => ./internal/mongo
-	internal/server => ./internal/server
-	internal/spymaster => ./internal/spymaster
-	types => ./types
 )
 
 require (
@@ -41,6 +27,4 @@ require (
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
-	internal/controllers v1.0.0 // indirect
-	internal/spymaster v1.0.0 // indirect
 )

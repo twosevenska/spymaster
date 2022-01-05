@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"internal/mongo"
-	"types"
+	"spymaster/src/mongo"
+	"spymaster/types"
 )
 
 var (
