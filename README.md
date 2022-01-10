@@ -2,7 +2,7 @@
 
 ![spymaster.jpg](/spymaster.jpg)
 
-This is a microservice that focus on managing users and notifying other services of any changes.
+This microservice was part of an exercise that aimed to create a service for managing users and notifying other services of any changes.
 
 ## How to use
 
